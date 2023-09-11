@@ -136,19 +136,19 @@ void deserialize_cells_tree(struct ByteStream_t* src) {
         bool has_cache_bits = (first_byte & 0x20) != 0;
         uint8_t flags = (first_byte & 0x18) >> 3;
         UNUSED(flags);
-        VALIDATE(!index_included && !has_crc && !has_cache_bits, ERR_INVALID_CONTRACT);
+        VALIDATE(!index_included && !has_crc && !has_cache_bits, ERR_INVALID_FUNCTION_ID);
     }
 
     uint8_t ref_size = first_byte & 0x7; // size in bytes
-    VALIDATE(ref_size == 1, ERR_INVALID_CONTRACT);
+    VALIDATE(ref_size == 1, ERR_INVALID_SRC_ADDRESS);
 
     uint8_t offset_size = ByteStream_read_byte(src);
-    VALIDATE(offset_size != 0 && offset_size <= 8, ERR_INVALID_CONTRACT);
+    VALIDATE(offset_size != 0 && offset_size <= 8, ERR_INVALID_WALLET_ID);
 
     uint8_t cells_count = ByteStream_read_uint(src, ref_size);
 
     uint8_t roots_count = ByteStream_read_uint(src, ref_size);
-    VALIDATE(roots_count == MAX_ROOTS_COUNT, ERR_INVALID_CONTRACT);
+    VALIDATE(roots_count == MAX_ROOTS_COUNT, ERR_INVALID_WALLET_TYPE);
 
     {
         uint8_t absent_count = ByteStream_read_uint(src, ref_size);
