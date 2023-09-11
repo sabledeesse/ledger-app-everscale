@@ -437,7 +437,7 @@ int prepare_to_sign(struct ByteStream_t* src, uint8_t wc, uint8_t* address, uint
             uint8_t flags = deserialize_wallet_v3(&root_slice);
 
             // Gift
-            VALIDATE(bc->cells_count > GIFT_CELL_INDEX, ERR_INVALID_CELL_INDEX);
+            VALIDATE(bc->cells_count > GIFT_CELL_INDEX, ERR_INVALID_MESSAGE);
             Cell_t* gift_cell = &bc->cells[GIFT_CELL_INDEX];
 
             SliceData_t gift_slice;
@@ -459,7 +459,7 @@ int prepare_to_sign(struct ByteStream_t* src, uint8_t wc, uint8_t* address, uint
 
             uint8_t body_bit = SliceData_get_next_bit(&gift_slice);
             if (body_bit || gift_refs_count) {
-                VALIDATE(bc->cells_count > GIFT_CELL_INDEX + 1, ERR_INVALID_CELL_INDEX);
+                VALIDATE(bc->cells_count > GIFT_CELL_INDEX + 1, ERR_INVALID_MESSAGE);
                 Cell_t* ref_cell = &bc->cells[GIFT_CELL_INDEX + 1];
 
                 SliceData_t ref_slice;
@@ -484,7 +484,7 @@ int prepare_to_sign(struct ByteStream_t* src, uint8_t wc, uint8_t* address, uint
             bool in_same_cell = function_id == MULTISIG_CONFIRM_TRANSACTION;
 
             // Gift
-            VALIDATE(in_same_cell || bc->cells_count > GIFT_CELL_INDEX, ERR_INVALID_CELL_INDEX);
+            VALIDATE(in_same_cell || bc->cells_count > GIFT_CELL_INDEX, ERR_INVALID_MESSAGE);
             Cell_t* gift_cell = in_same_cell ? root_cell : &bc->cells[GIFT_CELL_INDEX];
 
             SliceData_t gift_slice;
@@ -501,7 +501,7 @@ int prepare_to_sign(struct ByteStream_t* src, uint8_t wc, uint8_t* address, uint
 
             // Gift body
             if (gift_refs_count) {
-                VALIDATE(bc->cells_count > GIFT_CELL_INDEX + 1, ERR_INVALID_CELL_INDEX);
+                VALIDATE(bc->cells_count > GIFT_CELL_INDEX + 1, ERR_INVALID_MESSAGE);
                 Cell_t* body_cell = &bc->cells[GIFT_CELL_INDEX + 1];
 
                 SliceData_t body_slice;
@@ -524,7 +524,7 @@ int prepare_to_sign(struct ByteStream_t* src, uint8_t wc, uint8_t* address, uint
             uint32_t function_id = deserialize_contract_header(&root_slice);
 
             // Gift
-            VALIDATE(bc->cells_count > GIFT_CELL_INDEX, ERR_INVALID_CELL_INDEX);
+            VALIDATE(bc->cells_count > GIFT_CELL_INDEX, ERR_INVALID_MESSAGE);
             Cell_t* gift_cell = &bc->cells[GIFT_CELL_INDEX];
 
             SliceData_t gift_slice;
@@ -537,7 +537,7 @@ int prepare_to_sign(struct ByteStream_t* src, uint8_t wc, uint8_t* address, uint
 
             // Gift body
             if (gift_refs_count) {
-                VALIDATE(bc->cells_count > GIFT_CELL_INDEX + 1, ERR_INVALID_CELL_INDEX);
+                VALIDATE(bc->cells_count > GIFT_CELL_INDEX + 1, ERR_INVALID_MESSAGE);
                 Cell_t* body_cell = &bc->cells[GIFT_CELL_INDEX + 1];
 
                 SliceData_t body_slice;
