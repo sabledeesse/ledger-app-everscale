@@ -164,7 +164,7 @@ void deserialize_cells_tree(struct ByteStream_t* src) {
 
     Cell_t cell;
     for (uint8_t i = 0; i < cells_count; ++i) {
-        VALIDATE(i < MAX_CONTRACT_CELLS_COUNT, ERR_INVALID_CONTRACT);
+        VALIDATE(i < MAX_CONTRACT_CELLS_COUNT, ERR_TICKER_LENGTH);
 
         uint8_t* cell_begin = ByteStream_get_cursor(src);
         uint8_t cell_length = ByteStream_get_length(src);
@@ -184,16 +184,16 @@ void deserialize_cells_tree(struct ByteStream_t* src) {
 
 void find_public_key_cell() {
     BocContext_t* bc = &boc_context;
-    VALIDATE(Cell_get_data(&bc->cells[0])[0] & 0x20, ERR_INVALID_CONTRACT); // has data branch
+    VALIDATE(Cell_get_data(&bc->cells[0])[0] & 0x20, ERR_INVALID_FLAG); // has data branch
 
     uint8_t refs_count = 0;
     uint8_t* refs = Cell_get_refs(&bc->cells[0], &refs_count);
-    VALIDATE(refs_count > 0 && refs_count <= 2, ERR_INVALID_CONTRACT);
+    VALIDATE(refs_count > 0 && refs_count <= 2, ERR_INVALID_FLAG);
 
     uint8_t data_root = refs[refs_count - 1];
-    VALIDATE(data_root != 0 && data_root <= MAX_CONTRACT_CELLS_COUNT, ERR_INVALID_CONTRACT);
+    VALIDATE(data_root != 0 && data_root <= MAX_CONTRACT_CELLS_COUNT, ERR_INVALID_FLAG);
     refs = Cell_get_refs(&bc->cells[data_root], &refs_count);
-    VALIDATE(refs_count != 0 && refs_count <= MAX_REFERENCES_COUNT, ERR_INVALID_CONTRACT);
+    VALIDATE(refs_count != 0 && refs_count <= MAX_REFERENCES_COUNT, ERR_INVALID_FLAG);
 
     uint8_t key_buffer[8];
     SliceData_t key;
@@ -331,17 +331,17 @@ void compute_multisig_address(uint32_t account_number, const uint8_t* wallet, ui
 
     BocContext_t* bc = &boc_context;
 
-    VALIDATE(bc->cells_count != 0, ERR_INVALID_CONTRACT);
+    VALIDATE(bc->cells_count != 0, ERR_RANGE_CHECK);
     find_public_key_cell(); // sets public key cell index to boc_context
 
     // Set code hash
     memcpy(bc->hashes + (bc->public_key_cell_index + 1) * HASH_SIZE, code_hash, HASH_SIZE);
     bc->cell_depth[bc->public_key_cell_index + 1] = cell_depth;
 
-    VALIDATE(bc->public_key_cell_index && bc->public_key_label_size_bits, ERR_INVALID_CONTRACT);
+    VALIDATE(bc->public_key_cell_index && bc->public_key_label_size_bits, ERR_RANGE_CHECK);
     Cell_t* cell = &bc->cells[bc->public_key_cell_index];
     uint8_t cell_data_size = Cell_get_data_size(cell);
-    VALIDATE(cell_data_size != 0 && cell_data_size <= MAX_PUBLIC_KEY_CELL_DATA_SIZE, ERR_INVALID_CONTRACT);
+    VALIDATE(cell_data_size != 0 && cell_data_size <= MAX_PUBLIC_KEY_CELL_DATA_SIZE, ERR_RANGE_CHECK);
     uint8_t* cell_data = Cell_get_data(cell);
 
     memcpy(bc->public_key_cell_data, cell_data, cell_data_size);
